@@ -1,0 +1,12 @@
+services:
+  ctf-bot:
+    build: .
+    container_name: ctf_discord_bot
+    restart: always
+    environment:
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
