@@ -133,8 +133,14 @@ def run_ctf_integration_tests():
     # Test local authorized request with X-Admin-Auth header
     header_json = '{"X-Admin-Auth": "admin_super_secret_token_2026"}'
     auth_request = ctf_engine.mock_curl_request("http://127.0.0.1:8080/debug_console", header_json)
-    assert "command_restored_success_2026" in auth_request, f"Expected debug console success cipher, got: {auth_request}"
-    print("✅ Local loopback SSRF request with custom X-Admin-Auth header successfully returned cipher: command_restored_success_2026")
+    assert "Y29tbWFuZF9yZXN0b3JlZF9zdWNjZXNzXzIwMjY=" in auth_request, f"Expected Base64 cipher in response, got: {auth_request}"
+    
+    # Extract and decode the base64 value
+    import base64
+    b64_cipher = "Y29tbWFuZF9yZXN0b3JlZF9zdWNjZXNzXzIwMjY="
+    decoded_cipher = base64.b64decode(b64_cipher).decode('utf-8')
+    assert decoded_cipher == "command_restored_success_2026", f"Expected decoded cipher mismatch, got: {decoded_cipher}"
+    print(f"✅ Local loopback SSRF request with custom X-Admin-Auth header successfully returned base64-encoded cipher: {b64_cipher}")
 
     # -------------------------------------------------------------
     # STAGE 6: /restore_system -> Flag Retrieval

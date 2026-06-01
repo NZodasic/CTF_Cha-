@@ -176,7 +176,7 @@ def mock_curl_request(url: str, headers_str: str = None) -> str:
                 break
                 
         if admin_auth_val == "admin_super_secret_token_2026":
-            return "[HTTP/1.1 200 OK]\nContent-Type: text/plain\n\n[SUCCESS] Authorized. Operator Session Restored.\nSystem Flag Decryption Key: command_restored_success_2026"
+            return "[HTTP/1.1 200 OK]\nContent-Type: text/plain\n\n[SUCCESS] Authorized. Operator Session Restored.\nSystem Flag Decryption Key (Base64 Encoded): Y29tbWFuZF9yZXN0b3JlZF9zdWNjZXNzXzIwMjY="
         else:
             return f"[HTTP/1.1 401 Unauthorized]\nContent-Type: text/plain\n\nError: Unauthorized. Administrative token '{admin_auth_val}' does not match key database."
             
