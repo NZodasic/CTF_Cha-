@@ -1,4 +1,5 @@
 import os
+import time
 import shlex
 import discord
 from discord import app_commands
@@ -80,6 +81,8 @@ async def on_ready():
 # CORE INTERACTION ON_MESSAGE ROUTING (DM-ONLY TEXT SHELL)
 # -------------------------------------------------------------
 
+user_cooldowns = {}
+
 @bot.event
 async def on_message(message: discord.Message):
     # Avoid infinite loop
@@ -137,6 +140,21 @@ async def on_message(message: discord.Message):
     cmd = args[0].lower().lstrip("/")
     user_id = message.author.id
     current_stage = ctf_engine.get_user_stage(user_id)
+
+    # Rate limit cooldown in DMs to prevent brute-forcing/spam
+    current_time = time.time()
+    if user_id in user_cooldowns:
+        elapsed = current_time - user_cooldowns[user_id]
+        if elapsed < 1.5:  # 1.5 seconds cooldown
+            rate_embed = create_terminal_embed(
+                title="Rate Limit Exceeded",
+                description="```\n[WARNING] Request rate limit exceeded.\nAnti-spam firewall triggered.\nPlease wait 1.5 seconds before running another command.\n```",
+                color=COLOR_WARNING
+            )
+            await message.channel.send(embed=rate_embed)
+            return
+            
+    user_cooldowns[user_id] = current_time
 
     # 1. HELP COMMAND (Stage 0+)
     if cmd == "help":
